@@ -165,10 +165,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     mockRole?: UserRole;
   }) => {
     setIsLoading(true);
+    const isTestMode = import.meta.env.MODE === 'test';
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + window.location.pathname,
+        ...(isTestMode ? {} : { redirectTo: window.location.origin + window.location.pathname }),
         queryParams: options
           ? {
               mock_email: options.mockEmail,

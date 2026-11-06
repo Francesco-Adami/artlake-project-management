@@ -146,14 +146,17 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     const creatorId = user?.id || session.user.id;
-    const { data, error } = await supabase
+    const projectInsertQuery = supabase
       .from('projects')
       .insert({
         name: params.name,
         description: params.description || '',
         created_by: creatorId,
-      })
-      .select();
+      });
+
+    const { data, error } = await (typeof (projectInsertQuery as any).select === 'function'
+      ? (projectInsertQuery as any).select()
+      : projectInsertQuery);
 
     if (error) {
       return { data: null, error: new Error(error.message) };
@@ -192,11 +195,14 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       return { data: null, error: new Error('Permission denied: only admins can update projects') };
     }
 
-    const { data, error } = await supabase
+    const updateQuery = supabase
       .from('projects')
       .update(params)
-      .eq('id', id)
-      .select();
+      .eq('id', id);
+
+    const { data, error } = await (typeof (updateQuery as any).select === 'function'
+      ? (updateQuery as any).select()
+      : updateQuery);
 
     if (error) {
       return { data: null, error: new Error(error.message) };
@@ -247,13 +253,16 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       return { data: null, error: new Error('Invalid email address') };
     }
 
-    const { data, error } = await supabase
+    const inviteQuery = supabase
       .from('project_members')
       .insert({
         project_id: projectId,
         user_email: cleanEmail,
-      })
-      .select();
+      });
+
+    const { data, error } = await (typeof (inviteQuery as any).select === 'function'
+      ? (inviteQuery as any).select()
+      : inviteQuery);
 
     if (error) {
       if ((error as any).code === '23505') {

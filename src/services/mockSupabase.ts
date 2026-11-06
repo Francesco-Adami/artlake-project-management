@@ -462,6 +462,10 @@ export class MockQueryBuilder<T = any> implements PromiseLike<PostgrestResponse<
   }
 
   public select(columns: string = '*'): this {
+    if (this.operation === 'insert' || this.operation === 'update' || this.operation === 'delete') {
+      this.selectColumns = columns;
+      return this;
+    }
     this.operation = 'select';
     this.selectColumns = columns;
     return this;

@@ -52,7 +52,7 @@ export const KanbanBoard: React.FC = () => {
   });
 
   return (
-    <div data-testid="kanban-view" className="workspace-full w-full max-w-[1400px] mx-auto px-6 py-6 pb-16 flex flex-col">
+    <div data-testid="kanban-view" className="workspace-full w-full max-w-[1400px] mx-auto px-4 md:px-6 py-4 md:py-6 pb-28 flex flex-col">
       {/* Toast */}
       {toastMessage && (
         <div
@@ -104,11 +104,11 @@ export const KanbanBoard: React.FC = () => {
         </div>
       </div>
 
-      {/* Kanban 5 Columns */}
+      {/* Kanban 5 Columns with mobile scroll-snap */}
       <div
         id="kanbanBoard"
         data-testid="kanban-board"
-        className="kanban-board grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 overflow-x-auto pb-4"
+        className="kanban-board flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 md:grid md:grid-cols-3 xl:grid-cols-5 md:overflow-visible"
       >
         {KANBAN_STATUSES.map(({ status, label }) => {
           const colTasks = filteredTasks.filter((t) => t.status === status);
@@ -117,7 +117,7 @@ export const KanbanBoard: React.FC = () => {
             <div
               key={status}
               data-testid={`kanban-col-${status}`}
-              className="kanban-col bg-bg-surface border border-border-subtle rounded-2xl p-4 flex flex-col gap-3 min-h-[540px]"
+              className="kanban-col bg-bg-surface border border-border-subtle rounded-2xl p-4 flex flex-col gap-3 min-h-[540px] min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 md:flex-shrink"
             >
               <div className="kanban-col-header flex items-center justify-between pb-2.5 border-b border-border-divider">
                 <span className="kanban-col-title text-[13px] font-semibold text-text-primary">

@@ -33,7 +33,7 @@ export const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div data-testid="admin-dashboard" className="workspace-full w-full max-w-[1400px] mx-auto px-6 py-6 pb-16 flex flex-col">
+    <div data-testid="admin-dashboard" className="workspace-full w-full max-w-[1400px] mx-auto px-4 md:px-6 py-6 pb-28 flex flex-col">
       {/* Toast */}
       {toastMessage && (
         <div

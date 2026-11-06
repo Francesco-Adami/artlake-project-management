@@ -17,7 +17,7 @@ export const NavigationPill: React.FC<NavigationPillProps> = ({ activeView, onVi
     <nav
       data-testid="nav-segmented"
       aria-label="Navigazione principale"
-      className="nav-segmented flex items-center bg-bg-surface border border-border-subtle p-[3px] rounded-pill gap-[2px]"
+      className="nav-segmented flex items-center fixed bottom-4 left-4 right-4 z-40 max-w-sm mx-auto justify-around bg-[rgba(19,17,28,0.92)] backdrop-blur-[16px] border border-border-subtle p-1.5 rounded-pill shadow-popover pb-[calc(0.375rem+env(safe-area-inset-bottom,0px))] md:static md:bottom-auto md:left-auto md:right-auto md:z-auto md:max-w-none md:mx-0 md:bg-bg-surface md:p-[3px] md:shadow-none md:justify-start md:pb-[3px] gap-[2px]"
     >
       {tabs.map((tab) => {
         const isActive = activeView === tab.id;
@@ -27,7 +27,7 @@ export const NavigationPill: React.FC<NavigationPillProps> = ({ activeView, onVi
             type="button"
             data-testid={`nav-pill-${tab.id}`}
             onClick={() => onViewChange(tab.id)}
-            className={`nav-pill-btn flex items-center gap-1.5 px-3 py-1 rounded-pill text-[12.5px] font-medium transition-all duration-150 cursor-pointer ${
+            className={`nav-pill-btn flex-1 md:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 md:py-1 min-h-[40px] md:min-h-0 rounded-pill text-[12.5px] font-medium transition-all duration-150 cursor-pointer ${
               isActive
                 ? 'active bg-accent-soft text-[#c8bcff] font-semibold shadow-[inset_0_0_0_1px_rgba(124,92,255,0.35)]'
                 : 'text-text-secondary hover:text-text-primary'

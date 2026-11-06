@@ -127,7 +127,7 @@ export const UserDashboard: React.FC = () => {
   return (
     <div
       data-testid="user-dashboard"
-      className="workspace-user w-full max-w-[1340px] mx-auto px-6 py-7 pb-16 grid grid-cols-1 lg:grid-cols-[minmax(0,2.35fr)_minmax(310px,1fr)] gap-[26px] items-start"
+      className="workspace-user w-full max-w-[1340px] mx-auto px-4 md:px-6 py-5 md:py-7 pb-28 grid grid-cols-1 lg:grid-cols-[minmax(0,2.35fr)_minmax(310px,1fr)] gap-[26px] items-start"
     >
       {/* Toast Notification */}
       {toastMessage && (

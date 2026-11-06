@@ -31,7 +31,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
     <div
       ref={dropdownRef}
       data-testid="notif-dropdown"
-      className="notif-dropdown absolute top-12 right-0 w-[360px] bg-bg-surface border border-white/12 rounded-2xl p-4 shadow-popover z-50 flex flex-col gap-3 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150"
+      className="notif-dropdown absolute top-12 right-0 w-[calc(100vw-24px)] max-w-[360px] bg-bg-surface border border-white/12 rounded-2xl p-4 shadow-popover z-50 flex flex-col gap-3 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-150"
     >
       <div className="notif-header flex items-center justify-between pb-2 border-b border-border-divider">
         <h4 className="text-[13.5px] font-semibold text-text-primary">Notifiche</h4>

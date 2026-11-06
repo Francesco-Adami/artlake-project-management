@@ -33,7 +33,7 @@ export const GanttView: React.FC = () => {
   });
 
   return (
-    <div data-testid="gantt-view" className="workspace-full w-full max-w-[1400px] mx-auto px-6 py-6 pb-16 flex flex-col">
+    <div data-testid="gantt-view" className="workspace-full w-full max-w-[1400px] mx-auto px-4 md:px-6 py-4 md:py-6 pb-28 flex flex-col">
       {/* Toolbar */}
       <div className="view-toolbar flex items-center justify-between gap-4 mb-5 flex-wrap">
         <div className="view-toolbar-left">
