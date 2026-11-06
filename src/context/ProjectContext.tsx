@@ -159,7 +159,10 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       return { data: null, error: new Error(error.message) };
     }
 
-    const insertedRow = Array.isArray(data) ? data[0] : data;
+    const insertedRow = Array.isArray(data) && data.length > 0 ? data[0] : (data as any);
+    if (!insertedRow) {
+      return { data: null, error: new Error('Project creation failed: empty response') };
+    }
     const newProject: Project = {
       id: insertedRow.id,
       name: insertedRow.name,
