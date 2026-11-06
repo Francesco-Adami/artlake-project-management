@@ -168,6 +168,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
+        redirectTo: window.location.origin + window.location.pathname,
         queryParams: options
           ? {
               mock_email: options.mockEmail,
