@@ -1,0 +1,25 @@
+{
+  "name": "ArtLake Studio — Workspace",
+  "short_name": "ArtLake",
+  "description": "ArtLake Studio Task & Project Management Web App",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b0a12",
+  "theme_color": "#0b0a12",
+  "icons": [
+    {
+      "src": "./pwa-icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./pwa-icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -152,10 +152,11 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
         name: params.name,
         description: params.description || '',
         created_by: creatorId,
-      });
+      })
+      .select();
 
-    if (error || !data) {
-      return { data: null, error: error ? new Error(error.message) : new Error('Creation failed') };
+    if (error) {
+      return { data: null, error: new Error(error.message) };
     }
 
     const insertedRow = Array.isArray(data) ? data[0] : data;
@@ -191,20 +192,29 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     const { data, error } = await supabase
       .from('projects')
       .update(params)
-      .eq('id', id);
+      .eq('id', id)
+      .select();
 
-    if (error || !data) {
-      return { data: null, error: error ? new Error(error.message) : new Error('Update failed') };
+    if (error) {
+      return { data: null, error: new Error(error.message) };
     }
 
-    const updatedRow = Array.isArray(data) ? data[0] : data;
-    const updated: Project = {
-      id: updatedRow.id,
-      name: updatedRow.name,
-      description: updatedRow.description || '',
-      createdBy: updatedRow.created_by,
-      createdAt: updatedRow.created_at,
-    };
+    const updatedRow = Array.isArray(data) ? data[0] : (data as any);
+    const updated: Project = updatedRow
+      ? {
+          id: updatedRow.id,
+          name: updatedRow.name,
+          description: updatedRow.description || '',
+          createdBy: updatedRow.created_by,
+          createdAt: updatedRow.created_at,
+        }
+      : {
+          id,
+          name: params.name || '',
+          description: params.description || '',
+          createdBy: '',
+          createdAt: new Date().toISOString(),
+        };
 
     await refreshProjects();
     return { data: updated, error: null };
@@ -239,20 +249,32 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       .insert({
         project_id: projectId,
         user_email: cleanEmail,
-      });
+      })
+      .select();
 
-    if (error || !data) {
-      return { data: null, error: error ? new Error(error.message) : new Error('Invitation failed') };
+    if (error) {
+      if ((error as any).code === '23505') {
+        return { data: null, error: new Error('Questo utente è già membro di questo progetto') };
+      }
+      return { data: null, error: new Error(error.message || 'Invitation failed') };
     }
 
-    const insertedMember = Array.isArray(data) ? data[0] : data;
-    const newMember: ProjectMember = {
-      id: insertedMember.id,
-      projectId: insertedMember.project_id,
-      userEmail: insertedMember.user_email,
-      userId: insertedMember.user_id,
-      invitedAt: insertedMember.invited_at,
-    };
+    const insertedMember = Array.isArray(data) && data.length > 0 ? data[0] : (data as any);
+    const newMember: ProjectMember = insertedMember
+      ? {
+          id: insertedMember.id,
+          projectId: insertedMember.project_id,
+          userEmail: insertedMember.user_email,
+          userId: insertedMember.user_id,
+          invitedAt: insertedMember.invited_at,
+        }
+      : {
+          id: `temp-${Date.now()}`,
+          projectId,
+          userEmail: cleanEmail,
+          userId: null,
+          invitedAt: new Date().toISOString(),
+        };
 
     await refreshMembers();
     return { data: newMember, error: null };
