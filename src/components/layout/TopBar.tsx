@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useProject } from '../../hooks/useProject';
 import { useTimer } from '../../hooks/useTimer';
@@ -32,25 +32,6 @@ export const TopBar: React.FC<TopBarProps> = ({
 
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(3);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
-  const handleInstallApp = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const choice = await deferredPrompt.userChoice;
-    if (choice?.outcome === 'accepted') {
-      setDeferredPrompt(null);
-    }
-  };
 
   const isCompact = activeView === 'kanban' || activeView === 'gantt';
 
@@ -62,13 +43,6 @@ export const TopBar: React.FC<TopBarProps> = ({
       >
         {/* ================= ZONE 1: BRAND + PROJECT SELECTOR + NAVIGATION PILL ================= */}
         <div data-testid="topbar-zone-1" className="topbar-left flex items-center gap-4 flex-shrink-0">
-          {/* macOS Window Dots */}
-          <div className="window-dots hidden md:flex items-center gap-[7px]">
-            <span className="dot red w-[11px] h-[11px] rounded-full bg-[#ff5f56]" />
-            <span className="dot yellow w-[11px] h-[11px] rounded-full bg-[#ffbd2e]" />
-            <span className="dot green w-[11px] h-[11px] rounded-full bg-[#27c93f]" />
-          </div>
-
           {/* ArtLake Studio Logo & Name */}
           <div className="brand flex items-center gap-2.5 font-semibold text-[14.5px] tracking-[-0.01em] text-text-primary pr-1.5">
             <div className="brand-logo w-7 h-7 rounded-lg bg-gradient-to-br from-accent-primary to-accent-hover flex items-center justify-center font-bold text-sm text-white shadow-[0_4px_12px_rgba(124,92,255,0.35)]">
@@ -91,20 +65,6 @@ export const TopBar: React.FC<TopBarProps> = ({
 
         {/* ================= ZONE 3: ACTIONS, PROFILE & LOGOUT ================= */}
         <div data-testid="topbar-zone-3" className="topbar-right flex items-center gap-2.5 relative flex-shrink-0">
-          {/* PWA Direct Desktop Install Button */}
-          {deferredPrompt && (
-            <button
-              type="button"
-              data-testid="pwa-install-btn"
-              onClick={handleInstallApp}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-pill text-xs font-semibold bg-accent-soft hover:bg-accent-primary/25 border border-accent-primary/45 text-accent-primary transition-all cursor-pointer shadow-sm hover:scale-105 whitespace-nowrap"
-              title="Installa ArtLake Studio sul Desktop"
-            >
-              <span>💻</span>
-              <span className="hidden sm:inline">Installa App</span>
-            </button>
-          )}
-
           {/* Role Switcher (Visible to Admins / Producers) */}
           {isAdmin && onRoleViewChange && (
             <div
