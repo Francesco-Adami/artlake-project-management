@@ -1,0 +1,2521 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArtLake Studio — Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0b0a12;
+      --bg-surface: #13111c;
+      --bg-surface-hover: #191626;
+      --bg-elevated: #1d192b;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-divider: rgba(255, 255, 255, 0.05);
+      --border-focus: rgba(124, 92, 255, 0.5);
+
+      --text-primary: #f4f3f8;
+      --text-secondary: #9c96b0;
+      --text-muted: #655f7a;
+
+      --accent-primary: #7c5cff;
+      --accent-hover: #9075ff;
+      --accent-soft: rgba(124, 92, 255, 0.15);
+
+      --emerald: #10b981;
+      --emerald-soft: rgba(16, 185, 129, 0.13);
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --rose: #f43f5e;
+      --rose-soft: rgba(244, 63, 94, 0.14);
+
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --radius-pill: 999px;
+
+      --shadow-card: 0 14px 34px -10px rgba(0, 0, 0, 0.55);
+      --shadow-popover: 0 22px 54px rgba(0, 0, 0, 0.75);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      background-image: radial-gradient(circle at 50% 0%, rgba(124, 92, 255, 0.09) 0%, transparent 55%);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ================= 3-ZONE TOP BAR (64px, ZERO SIDEBAR) ================= */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      background: rgba(11, 10, 18, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      gap: 14px;
+    }
+
+    /* ZONE 1: Brand + Segmented Navigation */
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 14.5px;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      padding-right: 6px;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #7c5cff, #9b82ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(124, 92, 255, 0.35);
+    }
+
+    /* Segmented Navigation Pill */
+    .nav-segmented {
+      display: flex;
+      align-items: center;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 3px;
+      border-radius: var(--radius-pill);
+      gap: 2px;
+    }
+
+    .nav-pill-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 5px 13px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.16s ease;
+    }
+
+    .nav-pill-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-pill-btn.active {
+      background: var(--accent-soft);
+      color: #c8bcff;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 1px rgba(124, 92, 255, 0.35);
+    }
+
+    /* ZONE 2: Smart Adaptive Timer Pill */
+    .topbar-center {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 6px 4px 13px;
+      border-radius: var(--radius-pill);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .topbar-center.running {
+      border-color: rgba(124, 92, 255, 0.45);
+      box-shadow: 0 0 22px rgba(124, 92, 255, 0.16);
+    }
+
+    .timer-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .topbar-center.running .timer-status-dot {
+      background: var(--emerald);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.22);
+      animation: pulseDot 1.8s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.75; }
+    }
+
+    .timer-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14.5px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--text-primary);
+      min-width: 74px;
+    }
+
+    .timer-edit-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 3px 5px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .timer-edit-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .timer-btn {
+      background: var(--accent-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 5px 13px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .timer-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .topbar-center.running .timer-btn {
+      background: var(--rose-soft);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.35);
+    }
+
+    /* Smart Collapsible Weekly Stats inside Timer Pill */
+    .timer-extra-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 260px;
+      overflow: hidden;
+      opacity: 1;
+      transition: max-width 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease, margin 0.2s ease;
+      white-space: nowrap;
+    }
+
+    /* Automatically compacts when on Kanban or Gantt */
+    .topbar-center.compact .timer-extra-wrap {
+      max-width: 0;
+      opacity: 0;
+      margin-left: -6px;
+      pointer-events: none;
+    }
+
+    .timer-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .timer-stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      padding-right: 6px;
+    }
+
+    .timer-stats strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ZONE 3: Role Switcher + Check Pill + Notifications + Profile */
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* Role Switcher (User vs Admin) */
+    .role-switch {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 2px;
+      font-size: 11.5px;
+    }
+
+    .role-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 4px 9px;
+      border-radius: var(--radius-pill);
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .role-btn.active {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+
+    .check-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: var(--emerald-soft);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      white-space: nowrap;
+    }
+
+    .check-pill.pending {
+      background: var(--amber-soft);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    .check-pill:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.1);
+    }
+
+    .icon-btn {
+      position: relative;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover, .icon-btn.active {
+      color: var(--text-primary);
+      background: var(--bg-surface-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--rose);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid var(--bg-base);
+    }
+
+    .notif-badge.hidden {
+      display: none;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 9px 3px 3px;
+      border-radius: var(--radius-pill);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .user-profile:hover {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: var(--border-subtle);
+    }
+
+    .avatar {
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      background: #231f35;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .avatar.accent {
+      background: rgba(124, 92, 255, 0.24);
+      color: #cabdff;
+      border-color: rgba(124, 92, 255, 0.45);
+    }
+
+    .user-name {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* ================= NOTIFICATIONS DROPDOWN ================= */
+    .notif-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      width: 360px;
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      box-shadow: var(--shadow-popover);
+      padding: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 200;
+      animation: fadeSlide 0.16s ease-out;
+    }
+
+    .notif-dropdown.open {
+      display: flex;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .notif-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-divider);
+    }
+
+    .notif-header h4 {
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .mark-read-btn {
+      background: none;
+      border: none;
+      color: var(--accent-hover);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .notif-item {
+      padding: 11px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      font-size: 12.5px;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+
+    .notif-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .notif-item.urgent {
+      background: rgba(244, 63, 94, 0.08);
+      border-color: rgba(244, 63, 94, 0.32);
+    }
+
+    .notif-item.read {
+      opacity: 0.55;
+    }
+
+    .notif-title {
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .notif-item.urgent .notif-title {
+      color: #fda4af;
+      font-weight: 600;
+    }
+
+    .notif-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ================= VIEWS CONTAINER ================= */
+    .view-section {
+      display: none;
+      animation: fadeSlide 0.2s ease-out;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    /* ================= VIEW 1: USER DASHBOARD (2 COLUMNS) ================= */
+    .workspace-user {
+      max-width: 1340px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.35fr) minmax(310px, 1fr);
+      gap: 26px;
+      align-items: start;
+    }
+
+    .hero-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 30px 34px;
+    }
+
+    .hero-eyebrow-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+    }
+
+    .status-select-wrapper {
+      position: relative;
+    }
+
+    .status-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--accent-soft);
+      color: #c8bcff;
+      border: 1px solid rgba(124, 92, 255, 0.38);
+      border-radius: var(--radius-pill);
+      padding: 6px 32px 6px 14px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .status-select[data-status="Bloccato"] {
+      background: var(--rose-soft);
+      color: #fda4af;
+      border-color: rgba(244, 63, 94, 0.4);
+    }
+
+    .status-select[data-status="In revisione"] {
+      background: var(--amber-soft);
+      color: #fcd34d;
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .status-select[data-status="Completata"] {
+      background: var(--emerald-soft);
+      color: #6ee7b7;
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .status-select[data-status="Non iniziata"] {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      border-color: var(--border-subtle);
+    }
+
+    .status-chevron {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      font-size: 10px;
+      color: currentColor;
+    }
+
+    .hero-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    .status-context-bar {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .status-context-bar.visible {
+      display: flex;
+    }
+
+    .status-context-bar.blocker {
+      background: rgba(244, 63, 94, 0.07);
+      border-color: rgba(244, 63, 94, 0.28);
+    }
+
+    .status-context-bar.review {
+      background: rgba(245, 158, 11, 0.07);
+      border-color: rgba(245, 158, 11, 0.28);
+    }
+
+    .status-context-bar input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .small-action-btn {
+      background: var(--accent-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .time-progress-section {
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-divider);
+    }
+
+    .time-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 9px;
+    }
+
+    .time-meta-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .time-meta-left strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .time-pct {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 65%;
+      background: linear-gradient(90deg, var(--accent-primary), #a48fff);
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    .task-description {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      line-height: 1.65;
+      margin-bottom: 26px;
+    }
+
+    .section-block {
+      padding-top: 22px;
+      border-top: 1px solid var(--border-divider);
+      margin-top: 22px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .section-label-upper {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .section-counter {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 10px;
+      margin: 0 -10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.12s ease;
+      user-select: none;
+    }
+
+    .checklist-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      color: transparent;
+      font-size: 11px;
+    }
+
+    .checklist-item.completed .custom-checkbox {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #fff;
+    }
+
+    .checklist-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: color 0.15s ease;
+      flex: 1;
+    }
+
+    .checklist-item.completed .checklist-text {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .add-subtask-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+      padding: 6px 2px;
+    }
+
+    .add-subtask-input {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      width: 100%;
+    }
+
+    .attachments-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .attachment-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 13px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .attachment-chip:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 14px;
+      margin-bottom: 18px;
+    }
+
+    .comment-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .comment-body {
+      flex: 1;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-divider);
+    }
+
+    .comment-row:last-child .comment-body {
+      border-bottom: none;
+      padding-bottom: 4px;
+    }
+
+    .comment-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .comment-author {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .comment-time {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .comment-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .comment-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 5px 6px 5px 16px;
+    }
+
+    .comment-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .comment-submit {
+      background: var(--accent-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 7px 18px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* RIGHT COLUMN: PROSSIME TASK QUEUE */
+    .queue-column {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .queue-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .queue-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .queue-count {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .queue-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .queue-card {
+      padding: 15px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.18s ease;
+    }
+
+    .queue-card:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.13);
+      transform: translateY(-2px);
+    }
+
+    .queue-card.blocking-others {
+      border-color: rgba(245, 158, 11, 0.32);
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.06) 0%, rgba(255, 255, 255, 0.015) 100%);
+    }
+
+    .queue-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .queue-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.35;
+    }
+
+    .due-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .due-badge.soon {
+      background: var(--rose-soft);
+      color: #fda4af;
+      border-color: rgba(244, 63, 94, 0.35);
+    }
+
+    .queue-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .queue-tag.amber {
+      background: var(--amber-soft);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .queue-tag.rose {
+      background: var(--rose-soft);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+
+    .queue-meta-text {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .queue-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-divider);
+    }
+
+    .promote-btn {
+      background: transparent;
+      border: none;
+      color: var(--accent-hover);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: gap 0.15s ease;
+    }
+
+    .promote-btn:hover {
+      gap: 8px;
+      color: #c1b3ff;
+    }
+
+    /* ================= VIEW 1B: ADMIN DASHBOARD (3x2 TEAM GRID) ================= */
+    .workspace-full {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 26px 24px 60px;
+    }
+
+    .view-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .view-toolbar-left h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .view-toolbar-left p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .view-toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .orphan-pill-btn {
+      background: var(--amber-soft);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .member-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+
+    .member-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.13);
+    }
+
+    .member-card.blocked-alert {
+      border-color: rgba(244, 63, 94, 0.38);
+    }
+
+    .member-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .member-identity {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .member-name {
+      font-size: 14.5px;
+      font-weight: 600;
+    }
+
+    .member-role {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .member-active-box {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .member-active-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .member-active-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .member-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding-top: 6px;
+      border-top: 1px solid var(--border-divider);
+    }
+
+    /* ================= VIEW 2: KANBAN (100% FULL WIDTH) ================= */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(250px, 1fr));
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+    }
+
+    .kanban-col {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 540px;
+    }
+
+    .kanban-col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-divider);
+    }
+
+    .kanban-col-title {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kanban-count {
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    .k-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.15s ease;
+    }
+
+    .k-card:hover {
+      border-color: rgba(124, 92, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .k-dept {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #b7a6ff;
+      background: var(--accent-soft);
+      padding: 2px 8px;
+      border-radius: 5px;
+      align-self: flex-start;
+    }
+
+    .k-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .k-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      padding-top: 8px;
+      border-top: 1px solid var(--border-divider);
+    }
+
+    .k-move-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .k-move-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--accent-primary);
+    }
+
+    /* ================= VIEW 3: GANTT TIMELINE (100% FULL WIDTH) ================= */
+    .gantt-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .gantt-header, .gantt-row {
+      display: grid;
+      grid-template-columns: 290px repeat(14, minmax(48px, 1fr));
+      border-bottom: 1px solid var(--border-divider);
+      align-items: center;
+    }
+
+    .gantt-header {
+      background: rgba(255, 255, 255, 0.02);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .gantt-task-cell {
+      padding: 14px 18px;
+      border-right: 1px solid var(--border-divider);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .gantt-day-cell {
+      text-align: center;
+      padding: 12px 4px;
+      border-right: 1px solid rgba(255, 255, 255, 0.025);
+      position: relative;
+      height: 100%;
+    }
+
+    .gantt-day-cell.today-col {
+      background: rgba(124, 92, 255, 0.07);
+      color: #c8bcff;
+    }
+
+    .gantt-timeline-track {
+      grid-column: 2 / span 14;
+      position: relative;
+      height: 58px;
+      display: grid;
+      grid-template-columns: repeat(14, 1fr);
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    .gantt-bar {
+      height: 30px;
+      border-radius: 8px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .gantt-bar.purple {
+      background: linear-gradient(90deg, #7c5cff, #987eff);
+    }
+
+    .gantt-bar.amber {
+      background: linear-gradient(90deg, #d97706, #f59e0b);
+    }
+
+    .gantt-bar.rose {
+      background: linear-gradient(90deg, #e11d48, #f43f5e);
+    }
+
+    .gantt-bar.emerald {
+      background: linear-gradient(90deg, #059669, #10b981);
+    }
+
+    /* ================= MODALS & TOAST ================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 5, 10, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-lg);
+      padding: 26px 28px;
+      box-shadow: var(--shadow-popover);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .close-modal {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+    }
+
+    .form-textarea, .form-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 11px 13px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13.5px;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 12px;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 9px 14px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-elevated);
+      border: 1px solid rgba(124, 92, 255, 0.4);
+      color: var(--text-primary);
+      padding: 11px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-popover);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.22s ease;
+      z-index: 400;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1120px) {
+      .workspace-user {
+        grid-template-columns: 1fr;
+      }
+      .admin-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .timer-extra-wrap {
+        display: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        height: auto;
+        padding: 10px 14px;
+        flex-wrap: wrap;
+      }
+      .window-dots, .user-name {
+        display: none;
+      }
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= 3-ZONE TOP BAR (NO SIDEBAR) ================= -->
+  <header class="topbar">
+    <!-- ZONA SINISTRA: Brand + Segmented Pill Navigation -->
+    <div class="topbar-left">
+      <div class="window-dots">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+      <div class="brand">
+        <div class="brand-logo">A</div>
+        <span>ArtLake Studio</span>
+      </div>
+
+      <nav class="nav-segmented" aria-label="Navigazione principale">
+        <button class="nav-pill-btn active" data-view="dashboard">
+          <span>🏠</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-pill-btn" data-view="kanban">
+          <span>📋</span>
+          <span>Kanban</span>
+        </button>
+        <button class="nav-pill-btn" data-view="gantt">
+          <span>📅</span>
+          <span>Gantt</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- ZONA CENTRALE: Smart Adaptive Timer Pill -->
+    <div class="topbar-center" id="timerPill">
+      <span class="timer-status-dot" title="Stato Timer"></span>
+      <span class="timer-display" id="timerDisplay">02:45:26</span>
+      <button class="timer-edit-btn" id="openTimeEditBtn" title="Rettifica orario manualmente">✎</button>
+      <button class="timer-btn" id="timerToggleBtn">
+        <span id="timerBtnIcon">▶</span>
+        <span id="timerBtnText">Avvia Timer</span>
+      </button>
+
+      <!-- Auto-collapses on Kanban & Gantt for extra breathing room -->
+      <div class="timer-extra-wrap" id="timerExtraWrap">
+        <div class="timer-divider"></div>
+        <div class="timer-stats">
+          <span>Settimana: <strong>24h 30m</strong></span>
+          <span>·</span>
+          <span>Media: <strong>36h/sett</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ZONA DESTRA: Role Switch + Check Settimanale + Notifiche + Profilo -->
+    <div class="topbar-right">
+      <div class="role-switch" title="Simula cambio vista tra Utente Membro e Producer Admin">
+        <button class="role-btn active" id="roleUserBtn">User</button>
+        <button class="role-btn" id="roleAdminBtn">Admin</button>
+      </div>
+
+      <button class="check-pill" id="weeklyCheckBtn" title="Apri Check Settimanale">
+        <span id="weeklyCheckIcon">✓</span>
+        <span id="weeklyCheckText">Check</span>
+      </button>
+
+      <button class="icon-btn" id="notifBellBtn" title="Notifiche">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="notif-badge" id="notifBadge">3</span>
+      </button>
+
+      <div class="user-profile">
+        <div class="avatar accent">FP</div>
+        <span class="user-name">Francesco P.</span>
+      </div>
+
+      <!-- Notifications Dropdown -->
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-header">
+          <h4>Notifiche</h4>
+          <button class="mark-read-btn" id="markAllReadBtn">Segna lette</button>
+        </div>
+        <div class="notif-list">
+          <div class="notif-item urgent">
+            <div class="notif-title">⏳ Scadenza Imminente (&lt;3gg): 'Setup Audio Mixer &amp; Snapshot URP'</div>
+            <div class="notif-meta">All'accesso stamattina · Clicca per aprire</div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-title">💬 Marco Lead ha commentato sulla tua task 'Refactor Pipeline URP'</div>
+            <div class="notif-meta">Oggi, 11:30</div>
+          </div>
+          <div class="notif-item">
+            <div class="notif-title">📋 Nuova task assegnata: 'Integrazione Localizzazione Testi UI'</div>
+            <div class="notif-meta">Ieri</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= VIEW 1A: DASHBOARD - USER (FRANCESCO P.) ================= -->
+  <section class="view-section active" id="view-dashboard-user">
+    <main class="workspace-user">
+      <!-- LEFT COLUMN (70%): HERO ACTIVE TASK -->
+      <div class="hero-card">
+        <div class="hero-eyebrow-row">
+          <div class="eyebrow">Task Principale Attiva</div>
+
+          <div class="status-select-wrapper">
+            <select class="status-select" id="taskStatusSelect" data-status="In corso">
+              <option value="Non iniziata">Non iniziata</option>
+              <option value="In corso" selected>In corso</option>
+              <option value="Bloccato">Bloccato</option>
+              <option value="In revisione">In revisione</option>
+              <option value="Completata">Completata</option>
+            </select>
+            <span class="status-chevron">▾</span>
+          </div>
+        </div>
+
+        <h1 class="hero-title" id="activeTaskTitle">Refactor Pipeline URP &amp; Material Shader Graph</h1>
+
+        <div class="status-context-bar" id="statusContextBar">
+          <span id="statusContextIcon">⚠️</span>
+          <input type="text" id="statusContextInput" placeholder="Specifica il motivo del blocco..." />
+          <button class="small-action-btn" id="statusContextSaveBtn">Salva</button>
+        </div>
+
+        <div class="time-progress-section">
+          <div class="time-meta-row">
+            <div class="time-meta-left">
+              <span>Tempo Effettivo: <strong id="activeTaskSpent">6h 30m</strong></span>
+              <span style="color: var(--text-muted)">|</span>
+              <span>Stima Iniziale: <strong id="activeTaskEstimate">10h</strong></span>
+            </div>
+            <span class="time-pct" id="activeTaskPct">65% del tempo stimato</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="activeTaskProgressFill"></div>
+          </div>
+        </div>
+
+        <p class="task-description" id="activeTaskDesc">
+          Aggiornamento dei Custom Function Nodes e passaggio al Render Graph su Unity 6. Verificare la compatibilità degli shader d'ambiente sull'isola e il fallback per piattaforme a basso consumo.
+        </p>
+
+        <!-- Checklist Operativa (Zero Nested Boxes) -->
+        <div class="section-block" style="border-top: none; padding-top: 0; margin-top: 0;">
+          <div class="section-header">
+            <span class="section-title">Checklist Operativa (Sub-task)</span>
+            <span class="section-counter" id="checklistCounter">2 / 4 completati</span>
+          </div>
+
+          <div class="checklist" id="checklistContainer"></div>
+
+          <div class="add-subtask-row">
+            <span style="color: var(--text-muted); font-size: 15px;">+</span>
+            <input type="text" class="add-subtask-input" id="newSubtaskInput" placeholder="Aggiungi un micro-passaggio alla checklist e premi Invio..." />
+          </div>
+        </div>
+
+        <!-- Allegati -->
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-label-upper">Allegati</span>
+          </div>
+          <div class="attachments-row">
+            <a href="#pdf" class="attachment-chip" onclick="event.preventDefault(); showToast('Apertura Shader_Migration_v2.pdf')">
+              <span>📄</span>
+              <span>Shader_Migration_v2.pdf</span>
+            </a>
+            <a href="#png" class="attachment-chip" onclick="event.preventDefault(); showToast('Apertura profiling_rendergraph.png')">
+              <span>🖼️</span>
+              <span>profiling_rendergraph.png</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Commenti alla Task -->
+        <div class="section-block">
+          <div class="section-header">
+            <span class="section-label-upper" id="commentsHeaderCount">Commenti alla Task (2)</span>
+          </div>
+
+          <div class="comments-list" id="commentsList">
+            <div class="comment-row">
+              <div class="avatar">ML</div>
+              <div class="comment-body">
+                <div class="comment-meta">
+                  <span class="comment-author">Marco Lead</span>
+                  <span class="comment-time">Oggi, 11:30</span>
+                </div>
+                <p class="comment-text">Fai attenzione soprattutto al blending delle trasparenze nella cascata centrale.</p>
+              </div>
+            </div>
+
+            <div class="comment-row">
+              <div class="avatar accent">FP</div>
+              <div class="comment-body">
+                <div class="comment-meta">
+                  <span class="comment-author">Francesco (Tu)</span>
+                  <span class="comment-time">Oggi, 12:15</span>
+                </div>
+                <p class="comment-text">Sì, ho preparato un nodo custom con stencil buffer dedicato, lo testo nel pomeriggio.</p>
+              </div>
+            </div>
+          </div>
+
+          <form class="comment-form" id="commentForm">
+            <input type="text" class="comment-input" id="commentInput" placeholder="Scrivi una nota o commento alla task..." />
+            <button type="submit" class="comment-submit">Invia</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN (30%): PROSSIME TASK -->
+      <aside class="queue-column">
+        <div class="queue-header">
+          <h3>Prossime Task</h3>
+          <span class="queue-count" id="queueCountLabel">3 in coda</span>
+        </div>
+        <div class="queue-list" id="queueList"></div>
+      </aside>
+    </main>
+  </section>
+
+  <!-- ================= VIEW 1B: DASHBOARD - ADMIN (TEAM OVERVIEW 3x2) ================= -->
+  <section class="view-section" id="view-dashboard-admin">
+    <div class="workspace-full">
+      <div class="view-toolbar">
+        <div class="view-toolbar-left">
+          <h2>DashBoard — Admin (Panoramica Team)</h2>
+          <p>Monitoraggio in tempo reale delle Task Principali Attive, blocchi e carico orario settimanale.</p>
+        </div>
+        <div class="view-toolbar-right">
+          <button class="orphan-pill-btn" id="assignOrphanBtn">
+            <span>⚡</span>
+            <span id="orphanCountText">2 Task Orfane (Non assegnate)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-grid" id="adminTeamGrid"></div>
+    </div>
+  </section>
+
+  <!-- ================= VIEW 2: VISTA KANBAN (100% WIDTH) ================= -->
+  <section class="view-section" id="view-kanban">
+    <div class="workspace-full">
+      <div class="view-toolbar">
+        <div class="view-toolbar-left">
+          <h2>Vista Kanban</h2>
+          <p>Sfrutta tutta la larghezza dello schermo senza sidebar. Il timer in alto si è compattato automaticamente.</p>
+        </div>
+        <div class="view-toolbar-right">
+          <div class="role-switch">
+            <button class="role-btn active" id="kanbanFilterAll">Tutto il Team</button>
+            <button class="role-btn" id="kanbanFilterMine">Solo Francesco P.</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kanban-board" id="kanbanBoard"></div>
+    </div>
+  </section>
+
+  <!-- ================= VIEW 3: VISTA GANTT (100% WIDTH) ================= -->
+  <section class="view-section" id="view-gantt">
+    <div class="workspace-full">
+      <div class="view-toolbar">
+        <div class="view-toolbar-left">
+          <h2>Vista Gantt — Milestone &amp; Dipendenze</h2>
+          <p>Timeline sprint di ArtLake Studio con evidenza dei colli di bottiglia tra reparti.</p>
+        </div>
+        <div class="view-toolbar-right">
+          <span class="due-badge soon">Linea Verticale Viola = Oggi (5 Nov)</span>
+        </div>
+      </div>
+
+      <div class="gantt-card" id="ganttContainer"></div>
+    </div>
+  </section>
+
+  <!-- ================= MODAL: CHECK SETTIMANALE ================= -->
+  <div class="modal-backdrop" id="weeklyCheckModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Check Settimanale — Francesco P.</h3>
+        <button class="close-modal" id="closeWeeklyModal">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cos'ho fatto questa settimana</label>
+        <textarea class="form-textarea" rows="3" id="checkDoneInput">Migrazione nodi HLSL custom per foliage shader completata. Test del frame-rate sul Render Graph di Unity 6 avviati.</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Problemi / Blocchi riscontrati</label>
+        <textarea class="form-textarea" rows="3" id="checkBlockersInput">In attesa della mesh ottimizzata per le collisioni grotta dal team 3D per procedere con la task #104.</textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" id="toggleCheckStateBtn" type="button">Simula stato "Da compilare"</button>
+        <button class="btn-primary" id="saveWeeklyCheckBtn" type="button">✓ Salva Check Settimanale</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: RETTIFICA MANUALE TIMER ================= -->
+  <div class="modal-backdrop" id="timeEditModal">
+    <div class="modal-card" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>Rettifica Orario Sessione</h3>
+        <button class="close-modal" id="closeTimeModal">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tempo registrato su task attiva (HH:MM:SS)</label>
+        <input type="text" class="form-input" id="manualTimeInput" value="02:45:26" />
+      </div>
+      <div class="modal-actions" style="justify-content: flex-end;">
+        <button class="btn-primary" id="saveTimeEditBtn" type="button">Aggiorna Timer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toastBox">Pronto</div>
+
+  <script>
+    // ================= APPLICATION STATE =================
+    let currentView = 'dashboard'; // 'dashboard' | 'kanban' | 'gantt'
+    let currentRole = 'user';      // 'user' | 'admin'
+    let kanbanOnlyMine = false;
+
+    let timerSeconds = (2 * 3600) + (45 * 60) + 26;
+    let timerRunning = false;
+    let timerInterval = null;
+    let checkCompleted = true;
+
+    let activeTask = {
+      id: 't-101',
+      title: 'Refactor Pipeline URP & Material Shader Graph',
+      dept: '#TechArt',
+      owner: 'Francesco P.',
+      status: 'In corso',
+      spent: '6h 30m',
+      estimate: '10h',
+      pct: 65,
+      desc: "Aggiornamento dei Custom Function Nodes e passaggio al Render Graph su Unity 6. Verificare la compatibilità degli shader d'ambiente sull'isola e il fallback per piattaforme a basso consumo.",
+      subtasks: [
+        { text: 'Verifica compatibilità pacchetto Render Graph su Unity 6', done: true },
+        { text: 'Migrazione nodi HLSL custom per foliage shader', done: true },
+        { text: 'Test di frame-rate su scenario notturno con luci volumetriche', done: false },
+        { text: 'Commit branch e apertura Pull Request per revisione', done: false }
+      ]
+    };
+
+    let queuedTasks = [
+      {
+        id: 't-102',
+        title: 'Setup Audio Mixer & Snapshot URP',
+        dept: '#Audio',
+        owner: 'Francesco P.',
+        due: 'Entro 3gg',
+        dueUrgent: true,
+        tagType: 'amber',
+        tagText: '⚠️ Bloccante per Audio Team',
+        status: 'Non iniziata',
+        spent: '0h 00m',
+        estimate: '6h',
+        pct: 0,
+        desc: 'Configurazione dei gruppi Audio Mixer principali e creazione degli snapshot ambientali per transizioni grotta/esterno.',
+        subtasks: [
+          { text: 'Creazione routing Master, SFX, Ambient e UI', done: false },
+          { text: 'Collegamento parametri esposti allo script AudioZoneTrigger', done: false }
+        ]
+      },
+      {
+        id: 't-104',
+        title: 'Ottimizzazione Mesh Collisioni Grotta',
+        dept: '#3DEnv',
+        owner: 'Francesco P.',
+        due: 'Entro 1 set',
+        dueUrgent: false,
+        tagType: 'rose',
+        tagText: '⛔ Bloccata da Modello 3D',
+        status: 'Bloccato',
+        spent: '1h 20m',
+        estimate: '5h',
+        pct: 25,
+        desc: 'Sostituzione dei Mesh Collider ad alta densità con primitive composte nel settore B della grotta.',
+        subtasks: [
+          { text: 'Importazione nuova mesh low-poly dal reparto 3D', done: false },
+          { text: 'Bake Physics Mesh e test compenetrazione player', done: false }
+        ]
+      },
+      {
+        id: 't-105',
+        title: 'Integrazione Localizzazione Testi UI',
+        dept: '#UI/UX',
+        owner: 'Francesco P.',
+        due: 'Entro 2 set',
+        dueUrgent: false,
+        tagType: 'none',
+        metaText: 'Stato: Non iniziata · Stima: 4h',
+        status: 'Non iniziata',
+        spent: '0h 00m',
+        estimate: '4h',
+        pct: 0,
+        desc: 'Collegamento delle tabelle String Table di Unity Localization a tutti i menu principali e HUD di gioco.',
+        subtasks: [
+          { text: 'Setup String Table IT / EN / ES', done: false }
+        ]
+      }
+    ];
+
+    const teamMembers = [
+      { initials: 'FP', name: 'Francesco P.', role: 'Tech Artist', task: 'Refactor Pipeline URP & Material Shader Graph', status: 'In corso', hours: '24.5h / 36h', tasksCount: 4, checkOk: true },
+      { initials: 'ML', name: 'Marco Lead', role: 'Lead Developer', task: 'Architettura Save System & Cloud Sync', status: 'In revisione', hours: '31h / 38h', tasksCount: 3, checkOk: true },
+      { initials: 'E3', name: 'Elena 3D', role: 'Environment Artist', task: 'Retopology & Export Mesh Collisioni Grotta', status: 'In corso', hours: '28h / 36h', tasksCount: 5, checkOk: true },
+      { initials: 'LA', name: 'Luca Audio', role: 'Sound Designer', task: 'Banchi FMOD / Audio Mixer Isola Centrale', status: 'Bloccato', blockerNote: 'Attende Setup Audio Mixer da Francesco P.', hours: '19h / 32h', tasksCount: 3, checkOk: false },
+      { initials: 'SU', name: 'Sofia UI', role: 'UI/UX Designer', task: 'Restyle Inventario & Navigazione Top Bar', status: 'Completata', hours: '34h / 36h', tasksCount: 2, checkOk: true },
+      { initials: 'MV', name: 'Matteo VFX', role: 'VFX Artist', task: 'Particellari Cascata & Nebbia Volumetrica', status: 'In corso', hours: '22h / 36h', tasksCount: 4, checkOk: true }
+    ];
+
+    let allKanbanTasks = [
+      { id: 'k-1', title: 'Setup Audio Mixer & Snapshot URP', dept: '#Audio', owner: 'Francesco P.', status: 'Non iniziata', due: 'Entro 3gg', alert: '⚠️ Bloccante Audio' },
+      { id: 'k-2', title: 'Integrazione Localizzazione Testi UI', dept: '#UI/UX', owner: 'Francesco P.', status: 'Non iniziata', due: 'Entro 2 set', alert: '' },
+      { id: 'k-3', title: 'Refactor Pipeline URP & Material Shader Graph', dept: '#TechArt', owner: 'Francesco P.', status: 'In corso', due: 'Oggi', alert: '' },
+      { id: 'k-4', title: 'Retopology & Export Mesh Collisioni Grotta', dept: '#3DEnv', owner: 'Elena 3D', status: 'In corso', due: 'Domani', alert: '🔥 Sblocca Francesco' },
+      { id: 'k-5', title: 'Ottimizzazione Mesh Collisioni Grotta', dept: '#3DEnv', owner: 'Francesco P.', status: 'Bloccato', due: 'Entro 1 set', alert: '⛔ Da Modello 3D' },
+      { id: 'k-6', title: 'Banchi Audio Mixer Isola Centrale', dept: '#Audio', owner: 'Luca Audio', status: 'Bloccato', due: 'Entro 4gg', alert: '⛔ Attende Setup URP' },
+      { id: 'k-7', title: 'Architettura Save System & Cloud Sync', dept: '#CoreDev', owner: 'Marco Lead', status: 'In revisione', due: 'Oggi', alert: 'PR #42 aperta' },
+      { id: 'k-8', title: 'Restyle Inventario & Navigazione Top Bar', dept: '#UI/UX', owner: 'Sofia UI', status: 'Completata', due: 'Completata', alert: '' }
+    ];
+
+    // ================= NAVIGATION & SMART TOP BAR LOGIC =================
+    const navButtons = document.querySelectorAll('.nav-pill-btn');
+    const timerPill = document.getElementById('timerPill');
+    const roleUserBtn = document.getElementById('roleUserBtn');
+    const roleAdminBtn = document.getElementById('roleAdminBtn');
+
+    function updateActiveView() {
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+
+      if (currentView === 'dashboard') {
+        timerPill.classList.remove('compact');
+        if (currentRole === 'admin') {
+          document.getElementById('view-dashboard-admin').classList.add('active');
+          renderAdminGrid();
+        } else {
+          document.getElementById('view-dashboard-user').classList.add('active');
+        }
+      } else if (currentView === 'kanban') {
+        timerPill.classList.add('compact');
+        document.getElementById('view-kanban').classList.add('active');
+        renderKanban();
+      } else if (currentView === 'gantt') {
+        timerPill.classList.add('compact');
+        document.getElementById('view-gantt').classList.add('active');
+        renderGantt();
+      }
+    }
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentView = btn.dataset.view;
+        updateActiveView();
+      });
+    });
+
+    roleUserBtn.addEventListener('click', () => {
+      currentRole = 'user';
+      roleUserBtn.classList.add('active');
+      roleAdminBtn.classList.remove('active');
+      if (currentView !== 'dashboard') {
+        document.querySelector('[data-view="dashboard"]').click();
+      } else {
+        updateActiveView();
+      }
+      showToast('Vista impostata su: Dashboard User (Francesco P.)');
+    });
+
+    roleAdminBtn.addEventListener('click', () => {
+      currentRole = 'admin';
+      roleAdminBtn.classList.add('active');
+      roleUserBtn.classList.remove('active');
+      if (currentView !== 'dashboard') {
+        document.querySelector('[data-view="dashboard"]').click();
+      } else {
+        updateActiveView();
+      }
+      showToast('Vista impostata su: Dashboard Admin (Producer 3x2)');
+    });
+
+    // ================= HELPERS & TIMER =================
+    function formatSeconds(sec) {
+      const h = String(Math.floor(sec / 3600)).padStart(2, '0');
+      const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastBox');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerToggleBtn = document.getElementById('timerToggleBtn');
+    const timerBtnIcon = document.getElementById('timerBtnIcon');
+    const timerBtnText = document.getElementById('timerBtnText');
+
+    function setTimerState(run) {
+      timerRunning = run;
+      if (timerRunning) {
+        timerPill.classList.add('running');
+        timerBtnIcon.textContent = '⏸';
+        timerBtnText.textContent = 'Pausa';
+        timerInterval = setInterval(() => {
+          timerSeconds++;
+          timerDisplay.textContent = formatSeconds(timerSeconds);
+        }, 1000);
+        if (activeTask.status === 'Non iniziata') {
+          updateTaskStatus('In corso', false);
+          showToast('Timer avviato · Task portata automaticamente "In corso"');
+        }
+      } else {
+        timerPill.classList.remove('running');
+        timerBtnIcon.textContent = '▶';
+        timerBtnText.textContent = 'Avvia Timer';
+        clearInterval(timerInterval);
+      }
+    }
+
+    timerToggleBtn.addEventListener('click', () => setTimerState(!timerRunning));
+
+    // Manual Time Edit Modal
+    const timeEditModal = document.getElementById('timeEditModal');
+    const manualTimeInput = document.getElementById('manualTimeInput');
+
+    document.getElementById('openTimeEditBtn').addEventListener('click', () => {
+      manualTimeInput.value = formatSeconds(timerSeconds);
+      timeEditModal.classList.add('open');
+    });
+    document.getElementById('closeTimeModal').addEventListener('click', () => timeEditModal.classList.remove('open'));
+    document.getElementById('saveTimeEditBtn').addEventListener('click', () => {
+      const parts = manualTimeInput.value.trim().split(':').map(Number);
+      if (parts.length === 3 && !parts.some(isNaN)) {
+        timerSeconds = (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+        timerDisplay.textContent = formatSeconds(timerSeconds);
+        timeEditModal.classList.remove('open');
+        showToast('Orario del timer rettificato');
+      } else {
+        showToast('Usa il formato HH:MM:SS');
+      }
+    });
+
+    // ================= USER DASHBOARD RENDER =================
+    const checklistContainer = document.getElementById('checklistContainer');
+    const checklistCounter = document.getElementById('checklistCounter');
+    const taskStatusSelect = document.getElementById('taskStatusSelect');
+    const statusContextBar = document.getElementById('statusContextBar');
+    const statusContextInput = document.getElementById('statusContextInput');
+    const statusContextIcon = document.getElementById('statusContextIcon');
+
+    function renderActiveTask() {
+      document.getElementById('activeTaskTitle').textContent = activeTask.title;
+      document.getElementById('activeTaskSpent').textContent = activeTask.spent;
+      document.getElementById('activeTaskEstimate').textContent = activeTask.estimate;
+      document.getElementById('activeTaskPct').textContent = `${activeTask.pct}% del tempo stimato`;
+      document.getElementById('activeTaskProgressFill').style.width = `${activeTask.pct}%`;
+      document.getElementById('activeTaskDesc').textContent = activeTask.desc;
+
+      taskStatusSelect.value = activeTask.status;
+      taskStatusSelect.setAttribute('data-status', activeTask.status);
+      renderChecklist();
+    }
+
+    function renderChecklist() {
+      checklistContainer.innerHTML = '';
+      let doneCount = 0;
+      activeTask.subtasks.forEach((item, index) => {
+        if (item.done) doneCount++;
+        const row = document.createElement('div');
+        row.className = `checklist-item ${item.done ? 'completed' : ''}`;
+        row.innerHTML = `
+          <div class="custom-checkbox">${item.done ? '✓' : ''}</div>
+          <span class="checklist-text">${item.text}</span>
+        `;
+        row.addEventListener('click', () => {
+          activeTask.subtasks[index].done = !activeTask.subtasks[index].done;
+          renderChecklist();
+        });
+        checklistContainer.appendChild(row);
+      });
+      checklistCounter.textContent = `${doneCount} / ${activeTask.subtasks.length} completati`;
+    }
+
+    document.getElementById('newSubtaskInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.value.trim() !== '') {
+        activeTask.subtasks.push({ text: e.target.value.trim(), done: false });
+        e.target.value = '';
+        renderChecklist();
+        showToast('Sub-task aggiunto');
+      }
+    });
+
+    function updateTaskStatus(newStatus, notify = true) {
+      activeTask.status = newStatus;
+      taskStatusSelect.value = newStatus;
+      taskStatusSelect.setAttribute('data-status', newStatus);
+      statusContextBar.className = 'status-context-bar';
+
+      if (newStatus === 'Bloccato') {
+        if (timerRunning) setTimerState(false);
+        statusContextBar.classList.add('visible', 'blocker');
+        statusContextIcon.textContent = '⛔';
+        statusContextInput.placeholder = 'Specifica cosa ti blocca (es. In attesa mesh grotta dal team 3D)...';
+        statusContextInput.focus();
+      } else if (newStatus === 'In revisione') {
+        if (timerRunning) setTimerState(false);
+        statusContextBar.classList.add('visible', 'review');
+        statusContextIcon.textContent = '🔗';
+        statusContextInput.placeholder = 'Incolla link alla Pull Request o branch...';
+        statusContextInput.focus();
+      } else if (newStatus === 'Completata') {
+        if (timerRunning) setTimerState(false);
+        if (notify) showToast('Task completata! Timer messo in pausa.');
+      } else {
+        if (notify) showToast(`Stato aggiornato a "${newStatus}"`);
+      }
+    }
+
+    taskStatusSelect.addEventListener('change', (e) => updateTaskStatus(e.target.value));
+
+    document.getElementById('statusContextSaveBtn').addEventListener('click', () => {
+      if (!statusContextInput.value.trim()) {
+        showToast('Inserisci un dettaglio prima di salvare');
+        return;
+      }
+      statusContextBar.classList.remove('visible');
+      statusContextInput.value = '';
+      showToast(`Notifica di stato "${activeTask.status}" inviata a Marco Lead`);
+    });
+
+    function renderQueue() {
+      const queueList = document.getElementById('queueList');
+      queueList.innerHTML = '';
+      document.getElementById('queueCountLabel').textContent = `${queuedTasks.length} in coda`;
+
+      queuedTasks.forEach((task, idx) => {
+        const card = document.createElement('div');
+        card.className = `queue-card ${task.tagType === 'amber' ? 'blocking-others' : ''}`;
+        const middleHtml = (task.tagType === 'amber' || task.tagType === 'rose')
+          ? `<div class="queue-tag ${task.tagType}">${task.tagText}</div>`
+          : `<div class="queue-meta-text">${task.metaText || `Stato: ${task.status} · Stima: ${task.estimate}`}</div>`;
+
+        card.innerHTML = `
+          <div class="queue-top">
+            <div class="queue-title">${task.title}</div>
+            <span class="due-badge ${task.dueUrgent ? 'soon' : ''}">${task.due}</span>
+          </div>
+          ${middleHtml}
+          <div class="queue-footer">
+            <span style="font-size: 11.5px; color: var(--text-muted);">Stima: ${task.estimate}</span>
+            <button class="promote-btn">Passa a questa task →</button>
+          </div>
+        `;
+        card.querySelector('.promote-btn').addEventListener('click', () => {
+          const selected = queuedTasks[idx];
+          const prev = {
+            ...activeTask,
+            due: 'In corso',
+            dueUrgent: false,
+            tagType: 'none',
+            metaText: `Stato: ${activeTask.status} · Stima: ${activeTask.estimate}`
+          };
+          queuedTasks.splice(idx, 1, prev);
+          activeTask = selected;
+          renderActiveTask();
+          renderQueue();
+          showToast(`"${activeTask.title}" promossa a Task Principale`);
+        });
+        queueList.appendChild(card);
+      });
+    }
+
+    // Comments
+    let commentCount = 2;
+    document.getElementById('commentForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('commentInput');
+      const text = input.value.trim();
+      if (!text) return;
+      commentCount++;
+      const row = document.createElement('div');
+      row.className = 'comment-row';
+      row.innerHTML = `
+        <div class="avatar accent">FP</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Francesco (Tu)</span>
+            <span class="comment-time">Adesso</span>
+          </div>
+          <p class="comment-text"></p>
+        </div>
+      `;
+      row.querySelector('.comment-text').textContent = text;
+      document.getElementById('commentsList').appendChild(row);
+      document.getElementById('commentsHeaderCount').textContent = `Commenti alla Task (${commentCount})`;
+      input.value = '';
+    });
+
+    // ================= ADMIN DASHBOARD RENDER =================
+    let orphanCount = 2;
+    function renderAdminGrid() {
+      const grid = document.getElementById('adminTeamGrid');
+      grid.innerHTML = '';
+      teamMembers.forEach(m => {
+        const isBlocked = m.status === 'Bloccato';
+        const badgeColor = m.status === 'Bloccato' ? 'rose' : (m.status === 'In revisione' ? 'amber' : 'emerald');
+        const card = document.createElement('div');
+        card.className = `member-card ${isBlocked ? 'blocked-alert' : ''}`;
+        card.innerHTML = `
+          <div class="member-top">
+            <div class="member-identity">
+              <div class="avatar ${m.initials === 'FP' ? 'accent' : ''}">${m.initials}</div>
+              <div>
+                <div class="member-name">${m.name}</div>
+                <div class="member-role">${m.role}</div>
+              </div>
+            </div>
+            <span class="queue-tag ${badgeColor}">${m.status}</span>
+          </div>
+          <div class="member-active-box">
+            <div class="member-active-label">
+              <span>Task Attiva</span>
+              <span>${m.checkOk ? '✓ Check OK' : '⚠️ Check mancante'}</span>
+            </div>
+            <div class="member-active-title">${m.task}</div>
+            ${m.blockerNote ? `<div style="font-size:12px; color:#fda4af;">⛔ ${m.blockerNote}</div>` : ''}
+          </div>
+          <div class="member-footer">
+            <span>Task in coda: <strong>${m.tasksCount}</strong></span>
+            <span>Settimana: <strong>${m.hours}</strong></span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    document.getElementById('assignOrphanBtn').addEventListener('click', () => {
+      if (orphanCount > 0) {
+        orphanCount--;
+        teamMembers[0].tasksCount++;
+        document.getElementById('orphanCountText').textContent = orphanCount > 0
+          ? `${orphanCount} Task Orfana (Non assegnata)`
+          : `0 Task Orfane (Tutte assegnate ✓)`;
+        renderAdminGrid();
+        showToast('Task orfana "Shader Acqua Riva" assegnata a Francesco P.');
+      } else {
+        showToast('Nessuna task orfana rimasta nel backlog');
+      }
+    });
+
+    // ================= KANBAN RENDER =================
+    const statuses = ['Non iniziata', 'In corso', 'Bloccato', 'In revisione', 'Completata'];
+
+    function renderKanban() {
+      const board = document.getElementById('kanbanBoard');
+      board.innerHTML = '';
+
+      statuses.forEach((st, sIdx) => {
+        const tasks = allKanbanTasks.filter(t => t.status === st && (!kanbanOnlyMine || t.owner === 'Francesco P.'));
+        const col = document.createElement('div');
+        col.className = 'kanban-col';
+        col.innerHTML = `
+          <div class="kanban-col-header">
+            <span class="kanban-col-title">${st}</span>
+            <span class="kanban-count">${tasks.length}</span>
+          </div>
+        `;
+
+        tasks.forEach(task => {
+          const nextStatus = statuses[(sIdx + 1) % statuses.length];
+          const card = document.createElement('div');
+          card.className = 'k-card';
+          card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="k-dept">${task.dept}</span>
+              <span style="font-size:11px; color:var(--text-muted);">${task.due}</span>
+            </div>
+            <div class="k-title">${task.title}</div>
+            ${task.alert ? `<div style="font-size:11.5px; color:#fbbf24;">${task.alert}</div>` : ''}
+            <div class="k-meta">
+              <span>👤 ${task.owner}</span>
+              <button class="k-move-btn" title="Sposta in ${nextStatus}">→ ${nextStatus}</button>
+            </div>
+          `;
+          card.querySelector('.k-move-btn').addEventListener('click', () => {
+            task.status = nextStatus;
+            renderKanban();
+            showToast(`"${task.title}" spostata in ${nextStatus}`);
+          });
+          col.appendChild(card);
+        });
+
+        board.appendChild(col);
+      });
+    }
+
+    document.getElementById('kanbanFilterAll').addEventListener('click', (e) => {
+      kanbanOnlyMine = false;
+      e.target.classList.add('active');
+      document.getElementById('kanbanFilterMine').classList.remove('active');
+      renderKanban();
+    });
+
+    document.getElementById('kanbanFilterMine').addEventListener('click', (e) => {
+      kanbanOnlyMine = true;
+      e.target.classList.add('active');
+      document.getElementById('kanbanFilterAll').classList.remove('active');
+      renderKanban();
+    });
+
+    // ================= GANTT RENDER =================
+    function renderGantt() {
+      const container = document.getElementById('ganttContainer');
+      const days = ['2 Nov', '3 Nov', '4 Nov', '5 Nov (Oggi)', '6 Nov', '7 Nov', '8 Nov', '9 Nov', '10 Nov', '11 Nov', '12 Nov', '13 Nov', '14 Nov', '15 Nov'];
+
+      const ganttItems = [
+        { title: 'Refactor Pipeline URP & Shader', owner: 'Francesco P.', start: 1, span: 5, color: 'purple', label: '65% · In corso' },
+        { title: 'Setup Audio Mixer & Snapshot URP', owner: 'Francesco P.', start: 4, span: 3, color: 'amber', label: '⚠️ Sblocca Luca Audio' },
+        { title: 'Banchi Audio Mixer Isola Centrale', owner: 'Luca Audio', start: 7, span: 5, color: 'rose', label: 'Dipende da Setup URP' },
+        { title: 'Retopology Mesh Collisioni Grotta', owner: 'Elena 3D', start: 2, span: 4, color: 'emerald', label: '80% · Sblocca Task #104' },
+        { title: 'Ottimizzazione Mesh Collisioni Grotta', owner: 'Francesco P.', start: 6, span: 4, color: 'purple', label: 'Attende Mesh 3D' },
+        { title: 'Integrazione Localizzazione Testi UI', owner: 'Francesco P.', start: 9, span: 5, color: 'emerald', label: 'Pianificata (4h)' }
+      ];
+
+      let html = `<div class="gantt-header"><div class="gantt-task-cell">Task &amp; Assegnatario</div>`;
+      days.forEach((d, idx) => {
+        html += `<div class="gantt-day-cell ${idx === 3 ? 'today-col' : ''}">${d}</div>`;
+      });
+      html += `</div>`;
+
+      ganttItems.forEach(item => {
+        html += `
+          <div class="gantt-row">
+            <div class="gantt-task-cell">
+              <strong style="font-size:13px; color:var(--text-primary);">${item.title}</strong>
+              <span style="font-size:11.5px; color:var(--text-muted);">👤 ${item.owner}</span>
+            </div>
+            <div class="gantt-timeline-track">
+              <div class="gantt-bar ${item.color}" style="grid-column: ${item.start} / span ${item.span};">
+                <span>${item.label}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // ================= NOTIFICATIONS & WEEKLY CHECK MODAL =================
+    const notifBellBtn = document.getElementById('notifBellBtn');
+    const notifDropdown = document.getElementById('notifDropdown');
+    const notifBadge = document.getElementById('notifBadge');
+
+    notifBellBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifDropdown.classList.toggle('open');
+      notifBellBtn.classList.toggle('active');
+    });
+
+    document.getElementById('markAllReadBtn').addEventListener('click', () => {
+      document.querySelectorAll('.notif-item').forEach(el => {
+        el.classList.remove('urgent');
+        el.classList.add('read');
+      });
+      notifBadge.classList.add('hidden');
+      showToast('Tutte le notifiche segnate come lette');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!notifDropdown.contains(e.target) && e.target !== notifBellBtn) {
+        notifDropdown.classList.remove('open');
+        notifBellBtn.classList.remove('active');
+      }
+    });
+
+    const weeklyCheckBtn = document.getElementById('weeklyCheckBtn');
+    const weeklyCheckModal = document.getElementById('weeklyCheckModal');
+    const weeklyCheckIcon = document.getElementById('weeklyCheckIcon');
+    const weeklyCheckText = document.getElementById('weeklyCheckText');
+
+    function updateWeeklyPillUI() {
+      if (checkCompleted) {
+        weeklyCheckBtn.classList.remove('pending');
+        weeklyCheckIcon.textContent = '✓';
+        weeklyCheckText.textContent = 'Check';
+      } else {
+        weeklyCheckBtn.classList.add('pending');
+        weeklyCheckIcon.textContent = '⚠️';
+        weeklyCheckText.textContent = 'Check';
+      }
+    }
+
+    weeklyCheckBtn.addEventListener('click', () => weeklyCheckModal.classList.add('open'));
+    document.getElementById('closeWeeklyModal').addEventListener('click', () => weeklyCheckModal.classList.remove('open'));
+    document.getElementById('toggleCheckStateBtn').addEventListener('click', () => {
+      checkCompleted = !checkCompleted;
+      updateWeeklyPillUI();
+      showToast(checkCompleted ? 'Check impostato su: Compilato' : 'Check impostato su: Da compilare');
+    });
+    document.getElementById('saveWeeklyCheckBtn').addEventListener('click', () => {
+      checkCompleted = true;
+      updateWeeklyPillUI();
+      weeklyCheckModal.classList.remove('open');
+      showToast('Check Settimanale salvato!');
+    });
+
+    [weeklyCheckModal, timeEditModal].forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('open');
+      });
+    });
+
+    // Init
+    renderActiveTask();
+    renderQueue();
+  </script>
+</body>
+</html>

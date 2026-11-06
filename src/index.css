@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-base: #0b0a12;
+  --bg-surface: #13111c;
+  --bg-surface-hover: #191626;
+  --bg-elevated: #1d192b;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-divider: rgba(255, 255, 255, 0.05);
+  --border-focus: rgba(124, 92, 255, 0.5);
+
+  --text-primary: #f4f3f8;
+  --text-secondary: #9c96b0;
+  --text-muted: #655f7a;
+
+  --accent-primary: #7c5cff;
+  --accent-hover: #9075ff;
+  --accent-soft: rgba(124, 92, 255, 0.15);
+
+  --emerald: #10b981;
+  --emerald-soft: rgba(16, 185, 129, 0.13);
+  --amber: #f59e0b;
+  --amber-soft: rgba(245, 158, 11, 0.14);
+  --rose: #f43f5e;
+  --rose-soft: rgba(244, 63, 94, 0.14);
+
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 14px 34px -10px rgba(0, 0, 0, 0.55);
+  --shadow-popover: 0 22px 54px rgba(0, 0, 0, 0.75);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-base);
+  background-image: radial-gradient(circle at 50% 0%, rgba(124, 92, 255, 0.09) 0%, transparent 55%);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
