@@ -258,7 +258,7 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 CREATE OR REPLACE FUNCTION public.handle_profile_role_guard()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.role IS DISTINCT FROM OLD.role AND NOT public.is_admin() THEN
+    IF NEW.role IS DISTINCT FROM OLD.role AND auth.uid() IS NOT NULL AND NOT public.is_admin() THEN
         RAISE EXCEPTION 'permission denied: cannot alter role'
             USING ERRCODE = '42501';
     END IF;
