@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../hooks/useAuth';
-import { TaskStatus, TaskStatusLabel, TASK_STATUS_TO_LABEL } from '../../types/models';
+import { useProject } from '../../hooks/useProject';
+import { Task, TaskStatus, TaskStatusLabel, TASK_STATUS_TO_LABEL } from '../../types/models';
+import { TaskModal } from '../tasks/TaskModal';
 
 const KANBAN_STATUSES: { status: TaskStatus; label: TaskStatusLabel }[] = [
   { status: 'not_started', label: 'Non iniziata' },
@@ -13,9 +15,12 @@ const KANBAN_STATUSES: { status: TaskStatus; label: TaskStatusLabel }[] = [
 
 export const KanbanBoard: React.FC = () => {
   const { user } = useAuth();
+  const { isAdmin } = useProject();
   const { allKanbanTasks, changeStatus } = useTasks();
   const [filterMineOnly, setFilterMineOnly] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -73,6 +78,18 @@ export const KanbanBoard: React.FC = () => {
         </div>
 
         <div className="view-toolbar-right flex items-center gap-2">
+          {isAdmin && (
+            <button
+              type="button"
+              data-testid="create-task-btn"
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-accent-primary hover:bg-accent-hover text-white text-xs font-semibold px-3 py-1.5 rounded-pill cursor-pointer transition-colors shadow-sm flex items-center gap-1.5"
+            >
+              <span>+</span>
+              <span>Nuova Task</span>
+            </button>
+          )}
+
           <div className="role-switch flex items-center bg-white/[0.03] border border-border-subtle rounded-pill p-0.5 text-[11.5px]">
             <button
               id="kanbanFilterAll"
@@ -165,14 +182,24 @@ export const KanbanBoard: React.FC = () => {
 
                       <div className="k-meta flex items-center justify-between text-[11.5px] text-text-muted pt-2 border-t border-border-divider">
                         <span>👤 {task.assigneeId ? 'Assegnata' : 'Orfana'}</span>
-                        <button
-                          type="button"
-                          data-testid={`kanban-move-${task.id}`}
-                          onClick={() => handleQuickMove(task.id, task.title, task.status)}
-                          className="k-move-btn bg-white/5 border border-border-subtle text-text-secondary hover:text-text-primary hover:border-accent-primary text-[11px] px-2 py-0.5 rounded-md cursor-pointer transition-colors"
-                        >
-                          → {nextLabel}
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            data-testid={`kanban-edit-${task.id}`}
+                            onClick={() => setEditingTask(task)}
+                            className="k-edit-btn bg-white/5 border border-border-subtle text-text-secondary hover:text-text-primary hover:border-accent-primary text-[11px] px-2 py-0.5 rounded-md cursor-pointer transition-colors"
+                          >
+                            ✎ Modifica
+                          </button>
+                          <button
+                            type="button"
+                            data-testid={`kanban-move-${task.id}`}
+                            onClick={() => handleQuickMove(task.id, task.title, task.status)}
+                            className="k-move-btn bg-white/5 border border-border-subtle text-text-secondary hover:text-text-primary hover:border-accent-primary text-[11px] px-2 py-0.5 rounded-md cursor-pointer transition-colors"
+                          >
+                            → {nextLabel}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );
@@ -188,6 +215,21 @@ export const KanbanBoard: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Create Task Modal */}
+      <TaskModal
+        isOpen={isCreateModalOpen}
+        mode="create"
+        onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      {/* Edit Task Modal */}
+      <TaskModal
+        isOpen={editingTask !== null}
+        mode="edit"
+        initialTask={editingTask}
+        onClose={() => setEditingTask(null)}
+      />
     </div>
   );
 };

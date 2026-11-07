@@ -66,6 +66,10 @@ c:\Users\francesco\Documents\ArtLake\ProjectManagement\
 | 20 | Optimistic UI Updates | 0ms perceived latency on status changes, subtask checkboxes, and task promotions | M4 | Req R4, SRS §1.2 |
 | 21 | Comprehensive E2E Test Suite | 4-tier requirement-driven test suite validating R1-R5 and acceptance criteria | M5 | Req R5, Dual Track |
 | 22 | Adversarial Hardening (Tier 5) | White-box stress testing, boundary fuzzing, and concurrency validation | M5 | Dual Track §Phase 2 |
+| 23 | Admin-Only Task Creation | Task creation restricted strictly to 'admin' role with all 10 domain properties | M6 | Req R2, PLAN.md |
+| 24 | Universal Task Editing | Universal editing of all existing tasks across views for both 'admin' and 'user' | M6 | Req R3, PLAN.md |
+| 25 | Task Creation & Editing Modal | Reusable TaskModal supporting all domain properties in create and edit modes | M6 | Req R1-R3, PLAN.md |
+| 26 | Data Layer & RLS Enforcement | Task INSERT restricted to admin; UPDATE permitted for all project members | M6 | Req R2-R3, PLAN.md |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
@@ -75,6 +79,7 @@ c:\Users\francesco\Documents\ArtLake\ProjectManagement\
 | M3 | Top Bar, Adaptive Timer & Automations | 64px fixed Top Bar, adaptive timer state machine (auto-start/stop/compact), manual time edit (`✎`), weekly stats engine | M2 | DONE |
 | M4 | Operational Views & Optimistic UI | User Dashboard (70/30), Admin Dashboard, Kanban board, Gantt view, optimistic updates | M3 | DONE |
 | M5 | E2E Testing Track Pass & Coverage Hardening | 100% pass of Tiers 1-4 E2E tests, Tier 5 adversarial stress testing & coverage audit | M1, M2, M3, M4 | DONE |
+| M6 | Admin-Only Task Creation & Universal Editing | Detailed plan (/plan), TaskModal, Admin-only creation, Universal editing, RLS & context guards, Vitest suite | M1-M5 | DONE |
 
 ## Interface Contracts
 

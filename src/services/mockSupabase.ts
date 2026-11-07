@@ -274,9 +274,10 @@ class MockDatabase {
       case 'project_members':
         return { ok: false, error: { message: 'permission denied for project_members', code: '42501' } };
       case 'tasks':
-        return this.isProjectMember(row.project_id)
-          ? { ok: true }
-          : { ok: false, error: { message: 'permission denied for tasks', code: '42501' } };
+        return {
+          ok: false,
+          error: { message: 'permission denied for tasks: only admins can create tasks', code: '42501' },
+        };
       case 'subtasks': {
         const parent = this.state.tasks.find((t) => t.id === row.task_id);
         return parent && this.isProjectMember(parent.project_id)

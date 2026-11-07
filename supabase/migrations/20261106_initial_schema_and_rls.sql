@@ -332,9 +332,10 @@ CREATE POLICY "Tasks: Project members can select" ON public.tasks
     USING (public.is_admin() OR public.is_project_member(project_id));
 
 DROP POLICY IF EXISTS "Tasks: Project members can insert" ON public.tasks;
-CREATE POLICY "Tasks: Project members can insert" ON public.tasks
+DROP POLICY IF EXISTS "Tasks: Admin can insert" ON public.tasks;
+CREATE POLICY "Tasks: Admin can insert" ON public.tasks
     FOR INSERT TO authenticated
-    WITH CHECK (public.is_admin() OR public.is_project_member(project_id));
+    WITH CHECK (public.is_admin());
 
 DROP POLICY IF EXISTS "Tasks: Project members can update" ON public.tasks;
 CREATE POLICY "Tasks: Project members can update" ON public.tasks

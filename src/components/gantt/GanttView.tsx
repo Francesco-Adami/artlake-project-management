@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTasks } from '../../hooks/useTasks';
+import { Task } from '../../types/models';
+import { TaskModal } from '../tasks/TaskModal';
 
 export const GanttView: React.FC = () => {
   const { allKanbanTasks } = useTasks();
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const days = [
     '2 Nov', '3 Nov', '4 Nov', '5 Nov (Oggi)', '6 Nov', '7 Nov', '8 Nov',
@@ -83,14 +86,31 @@ export const GanttView: React.FC = () => {
               data-testid={`gantt-row-${item.id}`}
               className="gantt-row grid grid-cols-[290px_repeat(14,minmax(48px,1fr))] border-b border-border-divider items-center hover:bg-white/[0.015] transition-colors"
             >
-              <div className="gantt-task-cell p-3.5 px-4.5 border-r border-border-divider flex flex-col gap-0.5">
-                <strong className="text-[13px] text-text-primary line-clamp-1">{item.title}</strong>
-                <span className="text-[11.5px] text-text-muted">👤 {item.owner}</span>
+              <div className="gantt-task-cell p-3.5 px-4.5 border-r border-border-divider flex items-center justify-between gap-2">
+                <div className="flex flex-col gap-0.5 overflow-hidden">
+                  <strong className="text-[13px] text-text-primary line-clamp-1">{item.title}</strong>
+                  <span className="text-[11.5px] text-text-muted">👤 {item.owner}</span>
+                </div>
+                <button
+                  type="button"
+                  data-testid={`gantt-edit-${item.id}`}
+                  onClick={() => {
+                    const task = allKanbanTasks.find((t) => t.id === item.id);
+                    if (task) setEditingTask(task);
+                  }}
+                  className="bg-white/5 border border-border-subtle hover:border-accent-primary text-text-secondary hover:text-text-primary text-[11px] px-2 py-0.5 rounded-md cursor-pointer transition-colors flex-shrink-0"
+                >
+                  ✎
+                </button>
               </div>
 
               <div className="gantt-timeline-track col-span-14 h-[58px] grid grid-cols-14 items-center px-1 relative">
                 <div
-                  className={`gantt-bar h-[30px] rounded-lg px-3 flex items-center justify-between text-xs font-semibold text-white shadow-[0_4px_12px_rgba(0,0,0,0.3)] whitespace-nowrap overflow-hidden ${
+                  onClick={() => {
+                    const task = allKanbanTasks.find((t) => t.id === item.id);
+                    if (task) setEditingTask(task);
+                  }}
+                  className={`gantt-bar h-[30px] rounded-lg px-3 flex items-center justify-between text-xs font-semibold text-white shadow-[0_4px_12px_rgba(0,0,0,0.3)] whitespace-nowrap overflow-hidden cursor-pointer hover:opacity-90 transition-opacity ${
                     item.color === 'purple'
                       ? 'bg-gradient-to-r from-accent-primary to-[#987eff]'
                       : item.color === 'amber'
@@ -114,6 +134,14 @@ export const GanttView: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Edit Task Modal */}
+      <TaskModal
+        isOpen={editingTask !== null}
+        mode="edit"
+        initialTask={editingTask}
+        onClose={() => setEditingTask(null)}
+      />
     </div>
   );
 };

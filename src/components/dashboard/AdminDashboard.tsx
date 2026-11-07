@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTasks } from '../../hooks/useTasks';
+import { TaskModal } from '../tasks/TaskModal';
 
 export const AdminDashboard: React.FC = () => {
   const { teamMembersOverview, orphanTasks, assignOrphanTask } = useTasks();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -56,6 +58,15 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="view-toolbar-right flex items-center gap-2.5">
+          <button
+            type="button"
+            data-testid="admin-create-task-btn"
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-accent-primary hover:bg-accent-hover text-white text-xs font-semibold px-3.5 py-1.5 rounded-pill cursor-pointer transition-colors shadow-sm flex items-center gap-1.5"
+          >
+            <span>+</span>
+            <span>Nuova Task</span>
+          </button>
           <button
             id="assignOrphanBtn"
             data-testid="assign-orphan-btn"
@@ -156,6 +167,13 @@ export const AdminDashboard: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Admin Create Task Modal */}
+      <TaskModal
+        isOpen={isCreateModalOpen}
+        mode="create"
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   );
 };

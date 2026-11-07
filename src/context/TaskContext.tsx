@@ -20,6 +20,8 @@ import {
   QueuedTaskCard,
   ActiveHeroTaskViewModel,
   TeamMemberOverview,
+  CreateTaskParams,
+  UpdateTaskParams,
   TASK_STATUS_TO_LABEL,
   TASK_PRIORITY_TO_LABEL,
 } from '../types/models';
@@ -316,6 +318,8 @@ export interface TaskContextType {
     newStatus: TaskStatus,
     context?: { blockerReason?: string; reviewLink?: string }
   ) => Promise<boolean>;
+  createTask: (params: CreateTaskParams) => Promise<{ data: Task | null; error: Error | null }>;
+  updateTask: (taskId: string, params: UpdateTaskParams) => Promise<{ data: Task | null; error: Error | null }>;
   toggleSubtask: (subtaskId: string) => Promise<boolean>;
   addSubtask: (taskId: string, title: string) => Promise<boolean>;
   addComment: (taskId: string, content: string) => Promise<boolean>;
@@ -330,9 +334,30 @@ export const TaskContext = createContext<TaskContextType | undefined>(undefined)
 // PROVIDER IMPLEMENTATION
 // ----------------------------------------------------------------------------
 
+const mapTaskRow = (row: any): Task => ({
+  id: row.id,
+  projectId: row.project_id,
+  title: row.title,
+  description: row.description || '',
+  status: row.status as TaskStatus,
+  priority: row.priority as any,
+  departmentTag: row.department_tag || '#CoreDev',
+  assigneeId: row.assignee_id,
+  queueOrder: row.queue_order || 0,
+  estimatedMinutes: row.estimated_minutes || 0,
+  loggedMinutes: row.logged_minutes || 0,
+  dueDate: row.due_date,
+  startDate: row.start_date,
+  blockerReason: row.blocker_reason,
+  blockingTarget: row.blocking_target,
+  reviewOutputLink: row.review_output_link,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+});
+
 export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  const { currentProject, members, isLoadingProjects } = useProject();
+  const { currentProject, members, isLoadingProjects, isAdmin } = useProject();
   const {
     isRunning: isTimerRunning,
     stopTimer,
@@ -381,26 +406,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return;
       }
 
-      const tasks: Task[] = tasksData.map((row) => ({
-        id: row.id,
-        projectId: row.project_id,
-        title: row.title,
-        description: row.description || '',
-        status: row.status as TaskStatus,
-        priority: row.priority as any,
-        departmentTag: row.department_tag || '#CoreDev',
-        assigneeId: row.assignee_id,
-        queueOrder: row.queue_order || 0,
-        estimatedMinutes: row.estimated_minutes || 0,
-        loggedMinutes: row.logged_minutes || 0,
-        dueDate: row.due_date,
-        startDate: row.start_date,
-        blockerReason: row.blocker_reason,
-        blockingTarget: row.blocking_target,
-        reviewOutputLink: row.review_output_link,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
-      }));
+      const tasks: Task[] = tasksData.map(mapTaskRow);
 
       const taskIds = tasks.map((t) => t.id);
 
@@ -815,6 +821,122 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     [state.tasks, user?.id, members]
   );
 
+  // 7. Create Task (Admin-Only Guard)
+  const createTask = useCallback(
+    async (params: CreateTaskParams): Promise<{ data: Task | null; error: Error | null }> => {
+      const adminAuthorized = isAdmin || user?.role === 'admin';
+      if (!adminAuthorized) {
+        return {
+          data: null,
+          error: new Error('Permission denied: only admins can create tasks'),
+        };
+      }
+
+      if (!currentProject) {
+        return {
+          data: null,
+          error: new Error('No active project selected'),
+        };
+      }
+
+      if (!params.title || !params.title.trim()) {
+        return {
+          data: null,
+          error: new Error('Task title is required'),
+        };
+      }
+
+      try {
+        const payload = {
+          project_id: currentProject.id,
+          title: params.title.trim(),
+          description: params.description || '',
+          status: params.status || 'not_started',
+          priority: params.priority || 'medium',
+          department_tag: params.departmentTag || '#CoreDev',
+          assignee_id: params.assigneeId || null,
+          estimated_minutes: params.estimatedMinutes || 0,
+          logged_minutes: 0,
+          start_date: params.startDate || null,
+          due_date: params.dueDate || null,
+          blocking_target: params.blockingTarget || null,
+          blocker_reason: params.blockerReason || null,
+          queue_order: state.tasks.length,
+        };
+
+        const { data, error } = await supabase
+          .from('tasks')
+          .insert(payload)
+          .select()
+          .single();
+
+        if (error) {
+          return { data: null, error: new Error(error.message) };
+        }
+
+        await refreshTasks();
+        const mapped = data ? mapTaskRow(data) : null;
+        return { data: mapped, error: null };
+      } catch (err: any) {
+        return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
+      }
+    },
+    [isAdmin, user?.role, currentProject, state.tasks.length, refreshTasks]
+  );
+
+  // 8. Update Task (Universal Member Access)
+  const updateTask = useCallback(
+    async (taskId: string, params: UpdateTaskParams): Promise<{ data: Task | null; error: Error | null }> => {
+      if (!currentProject) {
+        return {
+          data: null,
+          error: new Error('No active project selected'),
+        };
+      }
+
+      try {
+        const dbPayload: any = {};
+        if (params.title !== undefined) dbPayload.title = params.title.trim();
+        if (params.description !== undefined) dbPayload.description = params.description;
+        if (params.status !== undefined) dbPayload.status = params.status;
+        if (params.priority !== undefined) dbPayload.priority = params.priority;
+        if (params.departmentTag !== undefined) dbPayload.department_tag = params.departmentTag;
+        if (params.assigneeId !== undefined) dbPayload.assignee_id = params.assigneeId;
+        if (params.estimatedMinutes !== undefined) dbPayload.estimated_minutes = params.estimatedMinutes;
+        if (params.loggedMinutes !== undefined) dbPayload.logged_minutes = params.loggedMinutes;
+        if (params.startDate !== undefined) dbPayload.start_date = params.startDate;
+        if (params.dueDate !== undefined) dbPayload.due_date = params.dueDate;
+        if (params.blockingTarget !== undefined) dbPayload.blocking_target = params.blockingTarget;
+        if (params.blockerReason !== undefined) dbPayload.blocker_reason = params.blockerReason;
+        if (params.reviewOutputLink !== undefined) dbPayload.review_output_link = params.reviewOutputLink;
+        if (params.queueOrder !== undefined) dbPayload.queue_order = params.queueOrder;
+
+        const { data, error } = await supabase
+          .from('tasks')
+          .update(dbPayload)
+          .eq('id', taskId)
+          .select()
+          .single();
+
+        if (error || !data) {
+          return { data: null, error: new Error(error?.message || `Task with id ${taskId} not found`) };
+        }
+
+        const existingTask = state.tasks.find((t) => t.id === taskId);
+        if (params.status !== undefined && (!existingTask || params.status !== existingTask.status)) {
+          onTaskStatusChange(taskId, params.status);
+        }
+
+        await refreshTasks();
+        const mapped = data ? mapTaskRow(data) : null;
+        return { data: mapped, error: null };
+      } catch (err: any) {
+        return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
+      }
+    },
+    [currentProject, state.tasks, onTaskStatusChange, refreshTasks]
+  );
+
   // --------------------------------------------------------------------------
   // DERIVED DATA & VIEW MODELS
   // --------------------------------------------------------------------------
@@ -991,6 +1113,8 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       allKanbanTasks,
       teamMembersOverview,
       changeStatus,
+      createTask,
+      updateTask,
       toggleSubtask,
       addSubtask,
       addComment,
@@ -1008,6 +1132,8 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       allKanbanTasks,
       teamMembersOverview,
       changeStatus,
+      createTask,
+      updateTask,
       toggleSubtask,
       addSubtask,
       addComment,

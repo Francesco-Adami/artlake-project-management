@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../hooks/useAuth';
 import { TaskStatus, TaskStatusLabel, LABEL_TO_TASK_STATUS } from '../../types/models';
+import { TaskModal } from '../tasks/TaskModal';
 
 export const UserDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -22,6 +23,7 @@ export const UserDashboard: React.FC = () => {
   const [showStatusContext, setShowStatusContext] = useState(false);
   const [contextType, setContextType] = useState<'blocker' | 'review'>('blocker');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -151,8 +153,19 @@ export const UserDashboard: React.FC = () => {
               Task Principale Attiva
             </div>
 
-            {/* Status Select Wrapper */}
-            <div className="status-select-wrapper relative">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                data-testid="edit-hero-task-btn"
+                onClick={() => setIsEditModalOpen(true)}
+                className="bg-white/5 border border-border-subtle hover:border-accent-primary text-text-secondary hover:text-text-primary text-xs font-semibold px-3 py-1.5 rounded-pill cursor-pointer transition-colors flex items-center gap-1.5"
+              >
+                <span>✎</span>
+                <span>Modifica Task</span>
+              </button>
+
+              {/* Status Select Wrapper */}
+              <div className="status-select-wrapper relative">
               <select
                 id="taskStatusSelect"
                 data-testid="task-status-select"
@@ -182,6 +195,7 @@ export const UserDashboard: React.FC = () => {
               </span>
             </div>
           </div>
+        </div>
 
           {/* Hero Title */}
           <h1
@@ -506,6 +520,14 @@ export const UserDashboard: React.FC = () => {
           )}
         </div>
       </aside>
+
+      {/* Edit Hero Task Modal */}
+      <TaskModal
+        isOpen={isEditModalOpen}
+        mode="edit"
+        initialTask={activeHeroViewModel?.task}
+        onClose={() => setIsEditModalOpen(false)}
+      />
     </div>
   );
 };

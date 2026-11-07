@@ -148,6 +148,37 @@ export interface Task {
   updatedAt: string;
 }
 
+export interface CreateTaskParams {
+  title: string;
+  description?: string;
+  status?: TaskStatus;             // default: 'not_started'
+  priority?: TaskPriority;         // default: 'medium'
+  departmentTag?: DepartmentTag;   // default: '#CoreDev'
+  assigneeId?: string | null;      // default: null
+  estimatedMinutes?: number;       // default: 0
+  startDate?: string | null;       // ISO date
+  dueDate?: string | null;         // ISO date
+  blockingTarget?: string | null;  // e.g. "Audio Team"
+  blockerReason?: string | null;
+}
+
+export interface UpdateTaskParams {
+  title?: string;
+  description?: string;
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  departmentTag?: DepartmentTag;
+  assigneeId?: string | null;
+  estimatedMinutes?: number;
+  loggedMinutes?: number;
+  startDate?: string | null;
+  dueDate?: string | null;
+  blockingTarget?: string | null;
+  blockerReason?: string | null;
+  reviewOutputLink?: string | null;
+  queueOrder?: number;
+}
+
 export interface TaskWithDetails extends Task {
   assignee?: Profile | null;
   subtasks: Subtask[];
